@@ -12,10 +12,9 @@ import (
 )
 
 var (
-	c1     = color.RGBA{0x44, 0xff, 0x44, 0xff}
-	c2     = color.RGBA{0xff, 0x44, 0x44, 0xff}
-	palet  = color.Palette([]color.Color{color.Black, color.White, c1, c2})
-	circle = MakeCircle()
+	c1    = color.RGBA{0x44, 0xff, 0x44, 0xff}
+	c2    = color.RGBA{0xff, 0x44, 0x44, 0xff}
+	palet = color.Palette([]color.Color{color.Black, color.White, c1, c2})
 )
 
 const RotationAngle = 5
@@ -48,36 +47,28 @@ func main() {
 }
 
 func drawFrame(frame int) *image.RGBA {
-	dest := image.NewRGBA(image.Rect(0, 0, 1000, 800.0))
+	dest := image.NewRGBA(image.Rect(0, 0, 400, 400.0))
 	gc := draw2dimg.NewGraphicContext(dest)
-	gc.Translate(200, 200)
+	circle := MakeCircle(float64(frame) * RotationAngle * math.Pi / 180)
+	gc.Translate(100, 100)
 	gc.DrawImage(circle)
-	gc.Save()
-	gc.Translate(200, 200)
-	gc.Rotate(float64(frame) * RotationAngle * math.Pi / 180)
-	gc.MoveTo(100, 100)
-	//gc.DrawImage(circle)
-	//gc.Translate(200, 200)
-	gc.DrawImage(circle)
-	//gc.Translate(-100, -100)
-	//gc.DrawImage(circle)
 	return dest
 }
 
-func MakeCircle() *image.RGBA {
+func MakeCircle(r float64) *image.RGBA {
 	dest := image.NewRGBA(image.Rect(0, 0, 200, 200.0))
 	gc := draw2dimg.NewGraphicContext(dest)
 
-	drawArc(gc, 100, 100, 0, c1)
-	drawArc(gc, 0, 0, 90*(math.Pi/180), c2)
-	drawArc(gc, 0, 0, 180*(math.Pi/180), c2)
-	drawArc(gc, 0, 0, 270*(math.Pi/180), c1)
+	gc.Translate(100, 100)
+	drawArc(gc, r+0*(math.Pi/180), c1)
+	drawArc(gc, r+90*(math.Pi/180), c2)
+	drawArc(gc, r+180*(math.Pi/180), c2)
+	drawArc(gc, r+270*(math.Pi/180), c1)
 
 	return dest
 }
 
-func drawArc(gc *draw2dimg.GraphicContext, x, y, r float64, c color.Color) {
-	gc.Translate(x, y)
+func drawArc(gc *draw2dimg.GraphicContext, r float64, c color.Color) {
 	gc.Rotate(r)
 	gc.SetFillColor(c)
 	gc.SetLineWidth(0)
