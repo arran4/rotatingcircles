@@ -18,18 +18,20 @@ var (
 	circle = MakeCircle()
 )
 
+const RotationAngle = 5
+
 func main() {
 	log.SetFlags(log.Flags() | log.Lshortfile)
 	images := []*image.Paletted{}
 	delays := []int{}
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 360/RotationAngle; i++ {
 		log.Printf("Frame %v", i)
 		frame := drawFrame(i)
 		pframe := image.NewPaletted(frame.Rect, palet)
 		draw.Draw(pframe, pframe.Rect, frame, frame.Rect.Min, draw.Over)
 		images = append(images, pframe)
-		delays = append(delays, 1)
+		delays = append(delays, 25)
 	}
 
 	f, err := os.Create("out.gif")
@@ -46,11 +48,19 @@ func main() {
 }
 
 func drawFrame(frame int) *image.RGBA {
-	dest := image.NewRGBA(image.Rect(0, 0, 1000, 1000.0))
+	dest := image.NewRGBA(image.Rect(0, 0, 1000, 800.0))
 	gc := draw2dimg.NewGraphicContext(dest)
-	//gc.Rotate(float64(frame) * 30 * math.Pi / 180)
-	gc.MoveTo(100, 100)
+	gc.Translate(200, 200)
 	gc.DrawImage(circle)
+	gc.Save()
+	gc.Translate(200, 200)
+	gc.Rotate(float64(frame) * RotationAngle * math.Pi / 180)
+	gc.MoveTo(100, 100)
+	//gc.DrawImage(circle)
+	//gc.Translate(200, 200)
+	gc.DrawImage(circle)
+	//gc.Translate(-100, -100)
+	//gc.DrawImage(circle)
 	return dest
 }
 
