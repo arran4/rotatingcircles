@@ -1,38 +1,53 @@
 package main
 
 import (
-	"github.com/llgcode/draw2d/draw2dimg"
+	"github.com/fogleman/gg"
 	"image"
 	"image/color"
 	"image/draw"
 	"image/gif"
 	"log"
-	"math"
 	"os"
 )
 
 var (
-	c1    = color.RGBA{0x44, 0xff, 0x44, 0xff}
-	c2    = color.RGBA{0xff, 0x44, 0x44, 0xff}
-	palet = color.Palette([]color.Color{color.Black, color.White, c1, c2})
+	c1 = color.RGBA{
+		R: 255,
+		G: 0,
+		B: 0,
+		A: 255,
+	}
+	c2 = color.RGBA{
+		R: 128,
+		G: 128,
+		B: 0,
+		A: 255,
+	}
+	palet = color.Palette{
+		image.Black,
+		c1,
+		c2,
+	}
 )
-
-const RotationAngle = 5
 
 func main() {
 	log.SetFlags(log.Flags() | log.Lshortfile)
 	images := []*image.Paletted{}
 	delays := []int{}
+	for i := 0.0; i < 360; i += 10 {
+		dc := gg.NewContext(800, 800)
+		dc.Push()
+		drawCircle(dc, i)
+		dc.Pop()
 
-	for i := 0; i < 360/RotationAngle; i++ {
-		log.Printf("Frame %v", i)
-		frame := drawFrame(i)
-		pframe := image.NewPaletted(frame.Rect, palet)
-		draw.Draw(pframe, pframe.Rect, frame, frame.Rect.Min, draw.Over)
+		frame := dc.Image()
+
+		pframe := image.NewPaletted(frame.Bounds(), palet)
+		draw.Draw(pframe, pframe.Rect, frame, frame.Bounds().Min, draw.Over)
+
 		images = append(images, pframe)
 		delays = append(delays, 25)
 	}
-
 	f, err := os.Create("out.gif")
 	if err != nil {
 		log.Panicf("Error:%v", err)
@@ -46,38 +61,20 @@ func main() {
 	}
 }
 
-func drawFrame(frame int) *image.RGBA {
-	dest := image.NewRGBA(image.Rect(0, 0, 400, 400.0))
-	gc := draw2dimg.NewGraphicContext(dest)
-	circle := MakeCircle(float64(frame) * RotationAngle * math.Pi / 180)
-	gc.Translate(100, 100)
-	gc.DrawImage(circle)
-	return dest
-}
-
-func MakeCircle(r float64) *image.RGBA {
-	dest := image.NewRGBA(image.Rect(0, 0, 200, 200.0))
-	gc := draw2dimg.NewGraphicContext(dest)
-
-	gc.Translate(100, 100)
-	drawArc(gc, r+0*(math.Pi/180), c1)
-	drawArc(gc, r+90*(math.Pi/180), c2)
-	drawArc(gc, r+180*(math.Pi/180), c2)
-	drawArc(gc, r+270*(math.Pi/180), c1)
-
-	return dest
-}
-
-func drawArc(gc *draw2dimg.GraphicContext, r float64, c color.Color) {
-	gc.Rotate(r)
-	gc.SetFillColor(c)
-	gc.SetLineWidth(0)
-	gc.MoveTo(0, 75)
-	gc.LineTo(0, 100)
-	gc.QuadCurveTo(100, 100, 100, 0)
-
-	gc.LineTo(75, 0)
-	gc.QuadCurveTo(75, 75, 0, 75)
-	gc.Close()
-	gc.FillStroke()
+func drawCircle(dc *gg.Context, rotate float64) {
+	step := 30.0
+	for i := 0.0; i < 360; i += step {
+		dc.Push()
+		dc.DrawArc(100, 100, 100, gg.Radians(i-step+rotate), gg.Radians(i+rotate))
+		dc.DrawArc(100, 100, 80, gg.Radians(i), gg.Radians(i-step+rotate))
+		switch int(i/step) % 2 {
+		case 0:
+			dc.SetRGB255(int(c1.R), int(c1.G), int(c1.B))
+		default:
+			dc.SetRGB255(int(c2.R), int(c2.G), int(c2.B))
+		}
+		dc.FillPreserve()
+		dc.ClearPath()
+		dc.Pop()
+	}
 }
