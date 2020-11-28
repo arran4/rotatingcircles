@@ -37,7 +37,14 @@ func main() {
 	for i := 0.0; i < 360; i += 10 {
 		dc := gg.NewContext(800, 800)
 		dc.Push()
-		drawCircle(dc, i)
+		dc.Translate(100, 100)
+		dc.RotateAbout(gg.Degrees(i), 100, 100)
+		drawCircle(dc)
+		dc.Pop()
+		dc.Push()
+		dc.Translate(350, 100)
+		dc.RotateAbout(gg.Degrees(340-i), 100, 100)
+		drawCircle(dc)
 		dc.Pop()
 
 		frame := dc.Image()
@@ -46,7 +53,7 @@ func main() {
 		draw.Draw(pframe, pframe.Rect, frame, frame.Bounds().Min, draw.Over)
 
 		images = append(images, pframe)
-		delays = append(delays, 25)
+		delays = append(delays, 5)
 	}
 	f, err := os.Create("out.gif")
 	if err != nil {
@@ -61,12 +68,12 @@ func main() {
 	}
 }
 
-func drawCircle(dc *gg.Context, rotate float64) {
+func drawCircle(dc *gg.Context) {
 	step := 30.0
 	for i := 0.0; i < 360; i += step {
 		dc.Push()
-		dc.DrawArc(100, 100, 100, gg.Radians(i-step+rotate), gg.Radians(i+rotate))
-		dc.DrawArc(100, 100, 80, gg.Radians(i), gg.Radians(i-step+rotate))
+		dc.DrawArc(100, 100, 100, gg.Radians(i-step), gg.Radians(i))
+		dc.DrawArc(100, 100, 80, gg.Radians(i), gg.Radians(i-step))
 		switch int(i/step) % 2 {
 		case 0:
 			dc.SetRGB255(int(c1.R), int(c1.G), int(c1.B))
