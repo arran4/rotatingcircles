@@ -35,7 +35,7 @@ func main() {
 	images := []*image.Paletted{}
 	delays := []int{}
 	for i := 0.0; i < 360; i += 10 {
-		dc := gg.NewContext(800, 800)
+		dc := gg.NewContext(650, 400)
 		dc.Push()
 		dc.Translate(100, 100)
 		dc.RotateAbout(gg.Degrees(i), 100, 100)
