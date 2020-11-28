@@ -7,24 +7,27 @@ import (
 	"image/draw"
 	"image/gif"
 	"log"
+	"math"
 	"os"
 )
 
 var (
 	c1 = color.RGBA{
-		R: 255,
+		R: 0,
 		G: 0,
-		B: 0,
+		B: 255,
 		A: 255,
 	}
 	c2 = color.RGBA{
-		R: 128,
-		G: 128,
-		B: 0,
+		R: 222,
+		G: 200,
+		B: 55,
 		A: 255,
 	}
 	palet = color.Palette{
+		color.Gray{Y: 256 - 64 - 32},
 		image.Black,
+		image.White,
 		c1,
 		c2,
 	}
@@ -34,17 +37,28 @@ func main() {
 	log.SetFlags(log.Flags() | log.Lshortfile)
 	images := []*image.Paletted{}
 	delays := []int{}
-	for i := 0.0; i < 360; i += 10 {
+	const step = 30
+	for i := 0.0; i < 360; i += step {
 		dc := gg.NewContext(650, 400)
 		dc.Push()
-		dc.Translate(100, 100)
-		dc.RotateAbout(gg.Degrees(i), 100, 100)
+		dc.Translate(100-25, 100)
+		dc.RotateAbout(gg.Radians(i), 100, 100)
 		drawCircle(dc)
 		dc.Pop()
 		dc.Push()
-		dc.Translate(350, 100)
-		dc.RotateAbout(gg.Degrees(340-i), 100, 100)
+		dc.Translate(350+25, 100)
+		dc.RotateAbout(gg.Radians(340-i), 100, 100)
 		drawCircle(dc)
+		dc.Pop()
+		arrowWidth, arrowHeight := measureUnidirectionalArrow()
+		dc.Push()
+		dc.Translate(100-25+100-arrowWidth/2, 100+100-arrowHeight/2-10*(math.Round((90)/90)))
+		drawUnidirectionalArrow(dc)
+		dc.Pop()
+		dc.Push()
+		dc.Translate(350+25+100-arrowWidth/2, 100+100-arrowHeight/2+10*(math.Round((90)/90)))
+		dc.RotateAbout(gg.Radians(180), arrowWidth/2, arrowHeight/2)
+		drawUnidirectionalArrow(dc)
 		dc.Pop()
 
 		frame := dc.Image()
@@ -53,7 +67,7 @@ func main() {
 		draw.Draw(pframe, pframe.Rect, frame, frame.Bounds().Min, draw.Over)
 
 		images = append(images, pframe)
-		delays = append(delays, 5)
+		delays = append(delays, step/3)
 	}
 	f, err := os.Create("out.gif")
 	if err != nil {
@@ -66,19 +80,60 @@ func main() {
 	}); err != nil {
 		log.Panicf("Error: %v", err)
 	}
+	log.Printf("Done")
+}
+
+func drawUnidirectionalArrow(dc *gg.Context) {
+	dc.Push()
+	/*
+		. . # . .
+		. . . . .
+		# # . # #
+		. . . . .
+		. . . . .
+		. . . . .
+		. # . # .
+	*/
+	const n = 10
+	points := [][]float64{
+		{2 * n, 0 * n},
+		{4 * n, (2 + 1) * n},
+		{2.5 * n, (2 + 1) * n},
+		{2.5 * n, (6 + 1) * n},
+		{1.5 * n, (6 + 1) * n},
+		{1.5 * n, (2 + 1) * n},
+		{0 * n, (2 + 1) * n},
+	}
+	dc.NewSubPath()
+	for i := 0; i < len(points); i += 1 {
+		dc.LineTo(points[i%len(points)][0], points[i%len(points)][1])
+	}
+	dc.ClosePath()
+	dc.SetColor(image.Black)
+	dc.SetLineWidth(2)
+	dc.StrokePreserve()
+	dc.FillPreserve()
+	dc.Pop()
+}
+
+func measureUnidirectionalArrow() (w, h float64) {
+	const n = 10
+	return 4 * n, 7 * n
 }
 
 func drawCircle(dc *gg.Context) {
-	step := 30.0
+	step := 90.0
+	radius := 80.0
+	thickness := 35.0
 	for i := 0.0; i < 360; i += step {
 		dc.Push()
-		dc.DrawArc(100, 100, 100, gg.Radians(i-step), gg.Radians(i))
-		dc.DrawArc(100, 100, 80, gg.Radians(i), gg.Radians(i-step))
+		dc.DrawArc(100, 100, radius+thickness, gg.Radians(i-step), gg.Radians(i))
+		dc.DrawArc(100, 100, radius, gg.Radians(i), gg.Radians(i-step))
 		switch int(i/step) % 2 {
 		case 0:
-			dc.SetRGB255(int(c1.R), int(c1.G), int(c1.B))
+			dc.SetColor(c1)
 		default:
-			dc.SetRGB255(int(c2.R), int(c2.G), int(c2.B))
+			dc.SetColor(c2)
 		}
 		dc.FillPreserve()
 		dc.ClearPath()
