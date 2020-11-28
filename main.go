@@ -38,7 +38,7 @@ func main() {
 	images := []*image.Paletted{}
 	delays := []int{}
 	const step = 30
-	const distance = 80
+	const distance = 35
 	for i := 0.0; i < 360; i += step {
 		dc := gg.NewContext(650, 400)
 		dc.Push()
@@ -126,22 +126,45 @@ func drawCircle(dc *gg.Context) {
 	step := 90.0
 	radius := 80.0
 	thickness := 35.0
+	narrowband := 1.0
 	for i := 0.0; i < 360; i += step {
 		dc.Push()
 		dc.DrawArc(100, 100, radius+thickness, gg.Radians(i-step), gg.Radians(i))
 		dc.DrawArc(100, 100, radius, gg.Radians(i), gg.Radians(i-step))
-		dc.SetColor(gold)
-		dc.FillPreserve()
-		dc.ClearPath()
 		switch int(i/step) % 2 {
 		case 0:
-			dc.DrawArc(100, 100, radius+thickness, gg.Radians(i-step), gg.Radians(i))
-			dc.DrawArc(100, 100, radius+1, gg.Radians(i), gg.Radians(i-step))
 			dc.SetColor(blue)
-			dc.FillPreserve()
-			dc.ClearPath()
 		default:
+			dc.SetColor(gold)
 		}
+		dc.FillPreserve()
+		dc.ClearPath()
+		dc.Pop()
+		dc.Push()
+		dc.RotateAbout(gg.Radians(45), 100, 100)
+		dc.DrawArc(100, 100, radius, gg.Radians(i-step), gg.Radians(i))
+		dc.DrawArc(100, 100, radius-narrowband, gg.Radians(i), gg.Radians(i-step))
+		switch int(i/step) % 2 {
+		case 0:
+			dc.SetColor(blue)
+		default:
+			dc.SetColor(gold)
+		}
+		dc.FillPreserve()
+		dc.ClearPath()
+		dc.Pop()
+		dc.Push()
+		dc.RotateAbout(gg.Radians(-45), 100, 100)
+		dc.DrawArc(100, 100, radius+thickness, gg.Radians(i-step), gg.Radians(i))
+		dc.DrawArc(100, 100, radius+thickness+narrowband, gg.Radians(i), gg.Radians(i-step))
+		switch int(i/step) % 2 {
+		case 0:
+			dc.SetColor(blue)
+		default:
+			dc.SetColor(gold)
+		}
+		dc.FillPreserve()
+		dc.ClearPath()
 		dc.Pop()
 	}
 }
