@@ -12,13 +12,13 @@ import (
 )
 
 var (
-	c1 = color.RGBA{
+	blue = color.RGBA{
 		R: 0,
 		G: 0,
 		B: 255,
 		A: 255,
 	}
-	c2 = color.RGBA{
+	gold = color.RGBA{
 		R: 222,
 		G: 200,
 		B: 55,
@@ -28,8 +28,8 @@ var (
 		color.Gray{Y: 256 - 64 - 32},
 		image.Black,
 		image.White,
-		c1,
-		c2,
+		blue,
+		gold,
 	}
 )
 
@@ -38,25 +38,26 @@ func main() {
 	images := []*image.Paletted{}
 	delays := []int{}
 	const step = 30
+	const distance = 80
 	for i := 0.0; i < 360; i += step {
 		dc := gg.NewContext(650, 400)
 		dc.Push()
-		dc.Translate(100-25, 100)
+		dc.Translate(100-distance, 100)
 		dc.RotateAbout(gg.Radians(i), 100, 100)
 		drawCircle(dc)
 		dc.Pop()
 		dc.Push()
-		dc.Translate(350+25, 100)
-		dc.RotateAbout(gg.Radians(340-i), 100, 100)
+		dc.Translate(350+distance, 100)
+		dc.RotateAbout(gg.Radians(i+90), 100, 100)
 		drawCircle(dc)
 		dc.Pop()
 		arrowWidth, arrowHeight := measureUnidirectionalArrow()
 		dc.Push()
-		dc.Translate(100-25+100-arrowWidth/2, 100+100-arrowHeight/2-10*(math.Round((90)/90)))
+		dc.Translate(100-distance+100-arrowWidth/2, 100+100-arrowHeight/2-10*(math.Round((90)/90)))
 		drawUnidirectionalArrow(dc)
 		dc.Pop()
 		dc.Push()
-		dc.Translate(350+25+100-arrowWidth/2, 100+100-arrowHeight/2+10*(math.Round((90)/90)))
+		dc.Translate(350+distance+100-arrowWidth/2, 100+100-arrowHeight/2+10*(math.Round((90)/90)))
 		dc.RotateAbout(gg.Radians(180), arrowWidth/2, arrowHeight/2)
 		drawUnidirectionalArrow(dc)
 		dc.Pop()
@@ -129,14 +130,18 @@ func drawCircle(dc *gg.Context) {
 		dc.Push()
 		dc.DrawArc(100, 100, radius+thickness, gg.Radians(i-step), gg.Radians(i))
 		dc.DrawArc(100, 100, radius, gg.Radians(i), gg.Radians(i-step))
-		switch int(i/step) % 2 {
-		case 0:
-			dc.SetColor(c1)
-		default:
-			dc.SetColor(c2)
-		}
+		dc.SetColor(gold)
 		dc.FillPreserve()
 		dc.ClearPath()
+		switch int(i/step) % 2 {
+		case 0:
+			dc.DrawArc(100, 100, radius+thickness, gg.Radians(i-step), gg.Radians(i))
+			dc.DrawArc(100, 100, radius+1, gg.Radians(i), gg.Radians(i-step))
+			dc.SetColor(blue)
+			dc.FillPreserve()
+			dc.ClearPath()
+		default:
+		}
 		dc.Pop()
 	}
 }
