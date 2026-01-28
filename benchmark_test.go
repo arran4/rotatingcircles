@@ -8,7 +8,7 @@ import (
 
 func BenchmarkCurrent(b *testing.B) {
 	dc := gg.NewContext(650, 400)
-    const distance = 35
+	const distance = 35
 	for i := 0; i < b.N; i++ {
 		arrowWidth, arrowHeight := measureUnidirectionalArrow()
 		dc.Push()
@@ -25,7 +25,7 @@ func BenchmarkCurrent(b *testing.B) {
 
 func BenchmarkOptimized(b *testing.B) {
 	dc := gg.NewContext(650, 400)
-    const distance = 35
+	const distance = 35
 	for i := 0; i < b.N; i++ {
 		arrowWidth, arrowHeight := measureUnidirectionalArrow()
 		dc.Push()
