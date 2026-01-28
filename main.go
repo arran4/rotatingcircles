@@ -84,6 +84,18 @@ func main() {
 	log.Printf("Done")
 }
 
+const arrowN = 10
+
+var arrowPoints = [][]float64{
+	{2 * arrowN, 0 * arrowN},
+	{4 * arrowN, (2 + 1) * arrowN},
+	{2.5 * arrowN, (2 + 1) * arrowN},
+	{2.5 * arrowN, (6 + 1) * arrowN},
+	{1.5 * arrowN, (6 + 1) * arrowN},
+	{1.5 * arrowN, (2 + 1) * arrowN},
+	{0 * arrowN, (2 + 1) * arrowN},
+}
+
 func drawUnidirectionalArrow(dc *gg.Context) {
 	dc.Push()
 	/*
@@ -95,19 +107,9 @@ func drawUnidirectionalArrow(dc *gg.Context) {
 		. . . . .
 		. # . # .
 	*/
-	const n = 10
-	points := [][]float64{
-		{2 * n, 0 * n},
-		{4 * n, (2 + 1) * n},
-		{2.5 * n, (2 + 1) * n},
-		{2.5 * n, (6 + 1) * n},
-		{1.5 * n, (6 + 1) * n},
-		{1.5 * n, (2 + 1) * n},
-		{0 * n, (2 + 1) * n},
-	}
 	dc.NewSubPath()
-	for i := 0; i < len(points); i += 1 {
-		dc.LineTo(points[i%len(points)][0], points[i%len(points)][1])
+	for i := 0; i < len(arrowPoints); i += 1 {
+		dc.LineTo(arrowPoints[i%len(arrowPoints)][0], arrowPoints[i%len(arrowPoints)][1])
 	}
 	dc.ClosePath()
 	dc.SetColor(image.Black)
@@ -118,8 +120,7 @@ func drawUnidirectionalArrow(dc *gg.Context) {
 }
 
 func measureUnidirectionalArrow() (w, h float64) {
-	const n = 10
-	return 4 * n, 7 * n
+	return 4 * arrowN, 7 * arrowN
 }
 
 func drawCircle(dc *gg.Context) {
