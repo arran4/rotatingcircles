@@ -35,9 +35,26 @@ var (
 
 func main() {
 	log.SetFlags(log.Flags() | log.Lshortfile)
-	images := []*image.Paletted{}
-	delays := []int{}
+	images, delays := generateFrames()
+	f, err := os.Create("out.gif")
+	if err != nil {
+		log.Panicf("Error:%v", err)
+	}
+	defer f.Close()
+	if err := gif.EncodeAll(f, &gif.GIF{
+		Image: images,
+		Delay: delays,
+	}); err != nil {
+		log.Panicf("Error: %v", err)
+	}
+	log.Printf("Done")
+}
+
+func generateFrames() ([]*image.Paletted, []int) {
 	const step = 30
+	const frameCount = 360 / step
+	images := make([]*image.Paletted, 0, frameCount)
+	delays := make([]int, 0, frameCount)
 	const distance = 35
 	for i := 0.0; i < 360; i += step {
 		dc := gg.NewContext(650, 400)
@@ -70,18 +87,7 @@ func main() {
 		images = append(images, pframe)
 		delays = append(delays, step/3)
 	}
-	f, err := os.Create("out.gif")
-	if err != nil {
-		log.Panicf("Error:%v", err)
-	}
-	defer f.Close()
-	if err := gif.EncodeAll(f, &gif.GIF{
-		Image: images,
-		Delay: delays,
-	}); err != nil {
-		log.Panicf("Error: %v", err)
-	}
-	log.Printf("Done")
+	return images, delays
 }
 
 func drawUnidirectionalArrow(dc *gg.Context) {
