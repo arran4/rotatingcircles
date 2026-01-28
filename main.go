@@ -7,7 +7,6 @@ import (
 	"image/draw"
 	"image/gif"
 	"log"
-	"math"
 	"os"
 )
 
@@ -53,11 +52,11 @@ func main() {
 		dc.Pop()
 		arrowWidth, arrowHeight := measureUnidirectionalArrow()
 		dc.Push()
-		dc.Translate(100-distance+100-arrowWidth/2, 100+100-arrowHeight/2-10*(math.Round((90)/90)))
+		dc.Translate(100-distance+100-arrowWidth/2, 100+100-arrowHeight/2-10*1.0)
 		drawUnidirectionalArrow(dc)
 		dc.Pop()
 		dc.Push()
-		dc.Translate(350+distance+100-arrowWidth/2, 100+100-arrowHeight/2+10*(math.Round((90)/90)))
+		dc.Translate(350+distance+100-arrowWidth/2, 100+100-arrowHeight/2+10*1.0)
 		dc.RotateAbout(gg.Radians(180), arrowWidth/2, arrowHeight/2)
 		drawUnidirectionalArrow(dc)
 		dc.Pop()
