@@ -8,3 +8,9 @@ func TestMeasureUnidirectionalArrow(t *testing.T) {
 		t.Errorf("expected positive dimensions, got w=%f, h=%f", w, h)
 	}
 }
+
+func BenchmarkGenerateFrames(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		generateFrames()
+	}
+}
