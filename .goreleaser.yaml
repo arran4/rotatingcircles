@@ -8,6 +8,7 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+    main: ./cmd/rotatingcircles
     goos:
       - linux
       - windows
@@ -18,7 +19,18 @@ builds:
 
 archives:
   - format: tar.gz
-    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    # this name template makes the usually proper name
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
     files:
       - LICENSE
       - README.md

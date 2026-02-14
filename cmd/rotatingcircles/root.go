@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"slices"
 
 	"rotatingcircles/cmd/rotatingcircles/templates"
 )
@@ -46,7 +45,7 @@ func NewUserError(err error, msg string) *UserError {
 	return &UserError{Err: err, Msg: msg}
 }
 
-func executeUsage(out io.Writer, templateName string, data any) error {
+func executeUsage(out io.Writer, templateName string, data interface{}) error {
 	return templates.GetTemplates().ExecuteTemplate(out, templateName, data)
 }
 
@@ -88,9 +87,11 @@ func NewRoot(name, version, commit, date string) (*RootCmd, error) {
 	c.Commands["generate"] = c.NewGenerate()
 	c.Commands["help"] = &InternalCommand{
 		Exec: func(args []string) error {
-			if slices.Contains(args, "-deep") {
-				c.UsageRecursive()
-				return nil
+			for _, arg := range args {
+				if arg == "-deep" {
+					c.UsageRecursive()
+					return nil
+				}
 			}
 			c.Usage()
 			return nil
@@ -99,9 +100,11 @@ func NewRoot(name, version, commit, date string) (*RootCmd, error) {
 	}
 	c.Commands["usage"] = &InternalCommand{
 		Exec: func(args []string) error {
-			if slices.Contains(args, "-deep") {
-				c.UsageRecursive()
-				return nil
+			for _, arg := range args {
+				if arg == "-deep" {
+					c.UsageRecursive()
+					return nil
+				}
 			}
 			c.Usage()
 			return nil
