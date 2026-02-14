@@ -1,4 +1,4 @@
-package main
+package rotatingcircles
 
 import (
 	"github.com/fogleman/gg"
@@ -33,7 +33,8 @@ var (
 	}
 )
 
-func main() {
+// Generate is a subcommand `rotatingcircles generate`
+func Generate() {
 	log.SetFlags(log.Flags() | log.Lshortfile)
 	images, delays := generateFrames()
 	f, err := os.Create("out.gif")
