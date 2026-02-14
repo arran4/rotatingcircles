@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"rotatingcircles"
@@ -45,7 +46,7 @@ func (c *Generate) Execute(args []string) error {
 			return cmd.Execute(args[1:])
 		}
 	}
-	for i := 0; i < len(args); i++ {
+	for i := range args {
 		arg := args[i]
 		if arg == "--" {
 			break
@@ -91,11 +92,9 @@ func (c *RootCmd) NewGenerate() *Generate {
 
 	v.SubCommands["help"] = &InternalCommand{
 		Exec: func(args []string) error {
-			for _, arg := range args {
-				if arg == "-deep" {
-					v.UsageRecursive()
-					return nil
-				}
+			if slices.Contains(args, "-deep") {
+				v.UsageRecursive()
+				return nil
 			}
 			v.Usage()
 			return nil
@@ -104,11 +103,9 @@ func (c *RootCmd) NewGenerate() *Generate {
 	}
 	v.SubCommands["usage"] = &InternalCommand{
 		Exec: func(args []string) error {
-			for _, arg := range args {
-				if arg == "-deep" {
-					v.UsageRecursive()
-					return nil
-				}
+			if slices.Contains(args, "-deep") {
+				v.UsageRecursive()
+				return nil
 			}
 			v.Usage()
 			return nil
