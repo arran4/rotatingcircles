@@ -16,7 +16,7 @@ To generate the animation yourself, you need to have [Go](https://go.dev/) insta
 
 2.  Run the program:
     ```bash
-    go run main.go
+    go run ./cmd/rotatingcircles generate
     ```
 
 3.  The output will be saved as `out.gif` in the current directory.
