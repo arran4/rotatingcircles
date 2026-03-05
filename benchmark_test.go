@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"github.com/fogleman/gg"
+	"testing"
 )
 
 func BenchmarkDrawUnidirectionalArrow(b *testing.B) {
