@@ -22,7 +22,7 @@ jobs:
           go-version-file: go.mod
 
       - name: Generate GIF
-        run: go run main.go
+        run: go run ./cmd/rotatingcircles
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
