@@ -2,6 +2,8 @@ version: "2"
 
 run:
   timeout: 5m
+  skip-dirs:
+    - cmd
 
 linters:
   enable:
@@ -10,3 +12,13 @@ linters:
     - errcheck
     - ineffassign
     - revive
+
+issues:
+  exclude-rules:
+    - path: 'cmd/.*\.go'
+      linters:
+        - revive
+        - staticcheck
+    - path: 'cmd/rotatingcircles/templates/templates\.go'
+      linters:
+        - revive

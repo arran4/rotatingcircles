@@ -41,7 +41,11 @@ func Generate() {
 	if err != nil {
 		log.Panicf("Error:%v", err)
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Printf("Error closing file: %v", err)
+		}
+	}()
 	if err := gif.EncodeAll(f, &gif.GIF{
 		Image: images,
 		Delay: delays,
@@ -113,7 +117,7 @@ func drawUnidirectionalArrow(dc *gg.Context) {
 		{0 * n, (2 + 1) * n},
 	}
 	dc.NewSubPath()
-	for i := 0; i < len(points); i += 1 {
+	for i := 0; i < len(points); i++ {
 		dc.LineTo(points[i%len(points)][0], points[i%len(points)][1])
 	}
 	dc.ClosePath()
