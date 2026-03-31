@@ -8,6 +8,18 @@ This repository was created to produce a high-quality, programmatic version of t
 
 ![Rotating Circles](out.gif)
 
+## Install
+
+### GitHub Releases
+Download binaries from: https://github.com/arran4/rotatingcircles/releases
+
+### Homebrew
+brew tap arran4/homebrew-tap
+brew install rotatingcircles
+
+### Go install
+go install github.com/arran4/rotatingcircles/cmd/rotatingcircles@latest
+
 ## Usage
 
 To generate the animation yourself, you need to have [Go](https://go.dev/) installed.
