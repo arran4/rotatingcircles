@@ -41,7 +41,11 @@ func Generate() {
 	if err != nil {
 		log.Panicf("Error:%v", err)
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Printf("Error closing file: %v", err)
+		}
+	}()
 	if err := gif.EncodeAll(f, &gif.GIF{
 		Image: images,
 		Delay: delays,
