@@ -77,7 +77,7 @@ func (c *RootCmd) UsageRecursive() {
 
 func NewRoot(name, version, commit, date string) (*RootCmd, error) {
 	c := &RootCmd{
-		FlagSet:  flag.NewFlagSet(name, flag.ExitOnError),
+		FlagSet:  flag.NewFlagSet(name, flag.ContinueOnError),
 		Commands: make(map[string]Cmd),
 		Version:  version,
 		Commit:   commit,
