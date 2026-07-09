@@ -49,8 +49,10 @@ changelog:
       - '^docs:'
       - '^test:'
 
-homebrew_casks:
+brews:
   -
+    description: "Generates an optical illusion: Rotating circles"
+    homepage: "https://github.com/arran4/rotatingcircles"
     repository:
       owner: arran4
       name: homebrew-tap
